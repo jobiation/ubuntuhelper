@@ -1,0 +1,7 @@
+tunnel: my-tunnel
+credentials-file: /root/.cloudflared/[tunnel_id].json
+
+ingress:
+  - hostname: home2.tonytranquillo.com
+    service: http://localhost:65080
+  - service: http_status:404

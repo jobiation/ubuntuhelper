@@ -1,0 +1,14 @@
+type,path,name,pemission,owner
+d,/var,www,775 664,tony:tony
+d,/var/local,crontab,770 660,tony:tony
+d,/var/local,backup,770 660,tony:tony
+d,/var/local,scripts,770 660,tony:tony
+bak.f,/etc,hosts.allow,644,root:root
+bak.f,/etc,hosts.deny,644,root:root
+bak.f,/etc/samba,smb.conf,644,root:root
+bak.f,/etc/apache2,ports.conf,644,root:root
+bak.f,/etc/apache2,apache2.conf,644,root:root
+bak.f,/etc/apache2/sites-available,000-default.conf,644,root:root
+bak.f,/etc/apache2/sites-available,default-ssl.conf,644,root:root
+bak.f,/etc/php/8.5/apache2,php.ini,644,root:root
+bak.f,/etc,fstab,644,root:root

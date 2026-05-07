@@ -1,6 +1,5 @@
 ##############SETTING UP THIS SCRIPT##################
 
-##### Make sure /root/git.key exists before running this script
 
 ###### You might need to type the following command one time:
 # git config --global credential.helper '!f() { sleep 1; echo "username=jobiation token=[YOUR_PERSONAL_ACCESS_TOKEN]"; }; f'
