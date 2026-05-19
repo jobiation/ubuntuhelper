@@ -1,2 +1,7 @@
 /var/local/backup/backup.sh,770,tony:tony
 /var/local/backup/restore.sh,770,tony:tony
+/var/local/backup/restore_scripts/*,770,tony:tony
+/var/local/crontab/tony_everyday.sh
+/var/local/crontab/tony_every_hour.sh
+/var/local/crontab/root_everyday.sh
+/var/local/crontab/root_every_hour.sh

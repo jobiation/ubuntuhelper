@@ -13,76 +13,85 @@
     echo -e "\nPress any key to continue.";
     read pause;
 
-# Execute commands in precommands.csv
-    echo -e "\nExecute commands in precommands.csv [y/n] ";
-    read answer;
-    if [ $answer == "y" ]; then
-        while read -r command
-        do
-            echo -e "#/bin/bash" > temp.sh;
-            echo -e $command >> temp.sh;
-            chmod 770 temp.sh;
-            source ./temp.sh;
-            rm temp.sh;
-        done < precommands.csv
-    fi
+# # Execute commands in precommands.csv
+#     echo -e "\nExecute commands in precommands.csv [y/n] ";
+#     read answer;
+#     if [ $answer == "y" ]; then
+#         while read -r command
+#         do
+#             echo -e "#/bin/bash" > temp.sh;
+#             echo -e $command >> temp.sh;
+#             chmod 770 temp.sh;
+#             source ./temp.sh;
+#             rm temp.sh;
+#         done < precommands.csv
+#     fi
 
-# Create important directories
-    echo -e "\nCreate the directories listed in important_dir.csv? [y/n] ";
-    read answer;
-    if [ $answer == "y" ]; then
-        while IFS="," read -r path permission owner
-        do
-            mkdir -p $path;
-            chmod -R $permission $path;
-            chown -R $owner $path; 
-        done < important_dir.csv
-    fi
+# # Create important directories
+#     echo -e "\nCreate the directories listed in important_dir.csv? [y/n] ";
+#     read answer;
+#     if [ $answer == "y" ]; then
+#         while IFS="," read -r path permission owner
+#         do
+#             mkdir -p $path;
+#             chmod -R $permission $path;
+#             chown -R $owner $path; 
+#         done < important_dir.csv
+#     fi
 
-## Apt update and upgrade
-    source ./restore_scripts/1_update_upgrade.sh;
+# ## Apt update and upgrade
+#     source ./restore_scripts/1_update_upgrade.sh;
 
-# Open UFW ports
-    source ./restore_scripts/2_ufw.sh;
+# # Open UFW ports
+#     source ./restore_scripts/2_ufw.sh;
 
-# Create another user and make sudoer if desired
-    source ./restore_scripts/3_new_unix_user.sh;
+# # Create another user and make sudoer if desired
+#     source ./restore_scripts/3_new_unix_user.sh;
 
-# Mount external disk at startup
-    source ./restore_scripts/4_mount_external_disk.sh;
+# # Mount external disk at startup
+#     source ./restore_scripts/4_mount_external_disk.sh;
 
-# Configure SSH
-    source ./restore_scripts/5_config_ssh.sh;
+# # Configure SSH
+#     source ./restore_scripts/5_config_ssh.sh;
 
-# Install SSH Key
-    source ./restore_scripts/5a_ssh_key.sh;
+# # Install SSH Key
+#     source ./restore_scripts/5a_ssh_key.sh;
 
-# Install Samba
-    source ./restore_scripts/6_samba_install.sh;
+# # Install Samba
+#     source ./restore_scripts/6_samba_install.sh;
 
-# Install LAMP stack
-    source ./restore_scripts/7_lamp_install.sh;
+# # Install LAMP stack
+#     source ./restore_scripts/7_lamp_install.sh;
 
 # Restore files and directories
     echo -e -n "\nRestore files and directories specified in backup_files.csv? [y/n] ";
     echo -e -n "\nType n if this is a new install rather than the restore of a backup.";
     read answer;
     if [ $answer == "y" ]; then
-        while IFS="," read -r type path name permission owner
+        while IFS="," read -r type path name permission owner altname
         do
-        if [ $type == "d" ]; then
-            cp -R "../$name" "$path";
-            chown -R $owner "$path/$name";
-            permissionArr=(${permission});
-            find "$path/$name" -type d -print0 | xargs -I {} -0 chmod "0${permissionArr[0]}" {}
-            find "$path/$name" -type f -print0 | xargs -I {} -0 chmod "0${permissionArr[1]}" {}
-        elif [ $type == "f" ]; then
-            cp "../$name" $path;
-            chmod $permission "$path/$name";
-            chown $owner "$path/$name";   
-        fi
+            if [ $type == "d" ]; then
+                cp -R "../$altname" "$path";
+                if [[ "$altname" != "" ]]; then
+                    mv "$path/$altname" "$path/$name"; 
+                fi
+                chown -R $owner "$path/$name";
+                permissionArr=(${permission});
+                find "$path/$name" -type d -print0 | xargs -I {} -0 chmod "0${permissionArr[0]}" {}
+                find "$path/$name" -type f -print0 | xargs -I {} -0 chmod "0${permissionArr[1]}" {}
+
+            elif [ $type == "f" ]; then
+                cp "../$altname" $path;
+                if [[ "$altname" != "" ]]; then
+                    mv "$path/$altname" "$path/$name"; 
+                fi
+                chmod $permission "$path/$name";
+                chown $owner "$path/$name";   
+            fi
         done < backup_files.csv
     fi
+
+exit;
 
 # Restore file permissions
     echo -e "\nRestore file permissions specified in file_permissions.csv? [y/n] ";
@@ -101,7 +110,7 @@
     if [ $answer == "y" ]; then
         while read -r user
         do
-            crontab -u $user "../crontab_$user.txt";
+            crontab -u $user "../crontab/crontab_$user.txt";
         done < crontabs.csv
     fi
 

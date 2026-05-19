@@ -24,13 +24,19 @@
     mkdir $current_backup_dir;
 
 # Backup all specified files
-    while IFS="," read -r type path name permission owner
+    while IFS="," read -r type path name permission owner altname
     do
-    if [ $type == "d" ]; then
-        cp -R "$path/$name" "$current_backup_dir"
-    elif [ $type == "f" ]; then
-        cp "$path/$name" "$current_backup_dir"
-    fi
+        if [ $type == "d" ]; then
+            cp -R "$path/$name" "$current_backup_dir"
+            if [[ "$altname" != "" ]]; then
+                mv "$current_backup_dir/$name" "$current_backup_dir/$altname"; 
+            fi
+        elif [ $type == "f" ]; then
+            cp "$path/$name" "$current_backup_dir";
+            if [[ "$altname" != "" ]]; then
+                mv "$current_backup_dir/$name" "$current_backup_dir/$altname"; 
+            fi
+        fi
     done < backup_files.csv
 
 # Export databases
@@ -44,7 +50,7 @@
     while IFS="," read -r user
     do
         echo "Backing up crontab for $user";
-        crontab -u $user -l > "$current_backup_dir/crontab_$user.txt";
+        crontab -u $user -l > "$current_backup_dir/crontab/crontab_$user.txt";
     done < crontabs.csv
 
 # Make sure you are at the local backup directory
@@ -74,9 +80,6 @@
     find $current_backup_dir -type d -print0 | xargs -I {} -0 chmod 0770 {}
     find $remote_backup_dir -type f -print0 | xargs -I {} -0 chmod 0660 {}
     find $remote_backup_dir -type d -print0 | xargs -I {} -0 chmod 0770 {}
-
-# Overwrite permissions on clone and push scripts.
-    # chmod 770 $remote_backup_dir/push.sh;
 
 # Remove history
     history -c && history -w;

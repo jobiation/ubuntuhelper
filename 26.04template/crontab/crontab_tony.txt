@@ -1,4 +1,6 @@
-#0 * * * * /usr/bin/php8.3 /var/local/crontab/clear_attempts.php
+1 1 * * * /var/local/crontab/tony_everyday.sh;
+0 * * * * /var/local/crontab/tony_everyday.sh;
+
 
 # Edit this file to introduce tasks to be run by cron.
 # 
