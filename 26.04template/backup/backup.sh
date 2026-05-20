@@ -5,7 +5,7 @@
     currentdate=`date '+%Y%m%d'`;
     local_backup_dir="/var/local/externaldisk/localbackup";
     current_backup_dir="$local_backup_dir/$currentdate";
-    remote_backup_dir="/var/local/externaldisk/remotebackup";
+    remote_backup_dir="/var/local/externaldisk/remotebackup/flashdrive";
     db_con="/var/cons/inc-db.sh";
     standarduser="tony";
 
